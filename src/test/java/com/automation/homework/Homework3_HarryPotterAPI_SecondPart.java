@@ -1,6 +1,7 @@
 package com.automation.homework;
 
-import com.automation.pojos.hw3Pojo.House1;
+import com.automation.pojos.hw3Pojo.Characters;
+import com.automation.pojos.hw3Pojo.House;
 import com.automation.utilities.ConfigurationReader;
 
 import io.restassured.builder.RequestSpecBuilder;
@@ -10,6 +11,8 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -103,43 +107,89 @@ public class Homework3_HarryPotterAPI_SecondPart {
                                        //get() object .toString()
         assertTrue(  response1.jsonPath().get("name").toString().contentEquals("[]") );
     }
-
     @Test
-    @DisplayName("Verify house members")
+    @DisplayName("Verify house members again")
     public void test8() {
         Response response = given().spec(requestSpec).
-                when().get("/houses");
+                            when().get("/houses");
         response.then().spec(responseSpec);
+                                                      //no collection name
+        List<House> houses = response.jsonPath().getList("", House.class);
+                    // list of ids
+        List<String> ids = new ArrayList<>();
 
-        List<House1> houses = response.jsonPath().getList("", House1.class);
         String id="";
-
-        for (House1 each:houses) {
-            if(each.getName().equals("Gryffindor"))
-                id = each.getId();
+        for (House eachHouse : houses) {
+            if( eachHouse.getName().equals("Gryffindor")){
+                id = eachHouse.get_id();
+                ids = eachHouse.getMembers();
+            }
         }
-
+       // System.out.println(id);
+       // System.out.println(ids);
         Response response1 = given().spec(requestSpec).
-                             when().get("/houses/"+id);
+                             when().get("/houses/{id}", id);
         response1.then().spec(responseSpec);
 
+        List<String> memberIDS= response1.jsonPath().get("members[0]._id");
+        //System.out.println(ids1);
+        assertEquals(ids,memberIDS);
     }
-
     @Test
     @DisplayName("Verify house members again")
     public void test9() {
-        Response response = given().spec(requestSpec).
-                            when().get("/houses/"+"5a05e2b252f721a3cf2ea33f");
-        List<Object> listOfMemberIds = response.jsonPath().getList("members._id");
-
         Response response1 = given().spec(requestSpec).
+                             when().get("/houses/"+"5a05e2b252f721a3cf2ea33f");
+        response1.then().spec(responseSpec);
+
+        List<String > ids1 = response1.body().jsonPath().getList("members._id");
+        System.out.println("ids1 = " + ids1);
+
+        Response response2 = given().spec(requestSpec).
                              queryParam("house","Gryffindor").
                              when().get("/characters");
-        response1.prettyPeek();
-        List<Object> MemberIds = response1.jsonPath().getList("*._id");
-        System.out.println("MemberIds = " + MemberIds);
-        assertTrue(MemberIds.toString().contains(listOfMemberIds.toString()));
+        response2.then().spec(responseSpec);
+        List<String> ids2 = response2.body().jsonPath().getList("_id");
+        System.out.println("ids2 = " + ids2);
+        assertTrue( ids1.size() == ids2.size() && ids1.containsAll(ids2) );
     }
 
+    @Test
+   @DisplayName("Verify house with most members")
+    public void test10() {
+       Response response = given().spec(requestSpec).
+               when().get("/houses");
+       response.then().spec(responseSpec);
+
+       List<House> houses = response.jsonPath().getList("", House.class);
+       int gmembers = 0, rmembers = 0, smembers = 0, hmembers = 0;
+       for (House each : houses) {
+           if (each.getName().equals("Gryffindor")) {
+               gmembers += each.getMembers().size();
+           } else if (each.getName().equals("Ravenclaw")) {
+               rmembers += each.getMembers().size();
+           } else if (each.getName().equals("Slytherin")) {
+               smembers += each.getMembers().size();
+           } else if (each.getName().equals("Hufflepuff")) {
+               hmembers += each.getMembers().size();
+           }
+       }
+       System.out.println(gmembers+ " "+rmembers+" "+smembers+" "+hmembers);
+       assertThat(gmembers, both(greaterThan(rmembers)).and(greaterThan(smembers)).and(greaterThan(hmembers)));
+
+       String maxMemberHouse="";
+       int maxMember =0;
+       for (int i = 0; i <houses.size()-1; i++) {
+            if( houses.get(i).getMembers().size() >=40 ){
+                maxMember=houses.get(i).getMembers().size();
+                maxMemberHouse = houses.get(i).getName();
+            }
+       }
+       System.out.println("maxMemberHouse = " + maxMemberHouse+"MaxMemberNumber= "+maxMember);
+
+       //List<String> GryffindorMembers = response.body().jsonPath().getList("find{it.name == 'Gryffindor'}.members");
+   }
+
 }
+
 

@@ -1,18 +1,29 @@
 package com.automation.pojos.hw3Pojo;
+/*
+{
+    "_id": "5a0fa4daae5bc100213c232e",
+    "name": "Hannah Abbott",
+    "role": "student",
+    "house": "Hufflepuff",
+    "school": "Hogwarts School of Witchcraft and Wizardry",
+    "__v": 0,
+    "ministryOfMagic": false,
+    "orderOfThePhoenix": false,
+    "dumbledoresArmy": true,
+    "deathEater": false,
+    "bloodStatus": "half-blood",
+    "species": "human"
+}
+ */
 
-import com.google.gson.annotations.SerializedName;
+public class Characters {
 
-public class Character {
-
-    @SerializedName("_id")
-    private String id;
+    private String _id;
     private String name;
     private String role;
     private String house;
     private String school;
-    private String founder;
-    @SerializedName("__v")
-    private int v;
+    private int __v;
     private String ministryOfMagic;
     private String orderOfThePhoenix;
     private String dumbledoresArmy;
@@ -20,31 +31,16 @@ public class Character {
     private String bloodStatus;
     private String species;
 
-    @Override
-    public String toString() {
-        return "Character{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", role='" + role + '\'' +
-                ", house='" + house + '\'' +
-                ", school='" + school + '\'' +
-                ", founder='" + founder + '\'' +
-                ", v=" + v +
-                ", ministryOfMagic='" + ministryOfMagic + '\'' +
-                ", orderOfThePhoenix='" + orderOfThePhoenix + '\'' +
-                ", dumbledoresArmy='" + dumbledoresArmy + '\'' +
-                ", deathEater='" + deathEater + '\'' +
-                ", bloodStatus='" + bloodStatus + '\'' +
-                ", species='" + species + '\'' +
-                '}';
+    public Characters(){
+
     }
 
-    public String getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getName() {
@@ -79,20 +75,12 @@ public class Character {
         this.school = school;
     }
 
-    public String getFounder() {
-        return founder;
+    public int get__v() {
+        return __v;
     }
 
-    public void setFounder(String founder) {
-        this.founder = founder;
-    }
-
-    public int getV() {
-        return v;
-    }
-
-    public void setV(int v) {
-        this.v = v;
+    public void set__v(int __v) {
+        this.__v = __v;
     }
 
     public String getMinistryOfMagic() {
@@ -141,5 +129,23 @@ public class Character {
 
     public void setSpecies(String species) {
         this.species = species;
+    }
+
+    @Override
+    public String toString() {
+        return "Characters{" +
+                "_id='" + _id + '\'' +
+                ", name='" + name + '\'' +
+                ", role='" + role + '\'' +
+                ", house='" + house + '\'' +
+                ", school='" + school + '\'' +
+                ", __v=" + __v +
+                ", ministryOfMagic='" + ministryOfMagic + '\'' +
+                ", orderOfThePhoenix='" + orderOfThePhoenix + '\'' +
+                ", dumbledoresArmy='" + dumbledoresArmy + '\'' +
+                ", deathEater='" + deathEater + '\'' +
+                ", bloodStatus='" + bloodStatus + '\'' +
+                ", species='" + species + '\'' +
+                '}';
     }
 }

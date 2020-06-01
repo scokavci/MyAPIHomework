@@ -1,10 +1,27 @@
 package com.automation.pojos.hw3Pojo;
 
-import com.google.gson.annotations.SerializedName;
-
 public class Members {
+    String _id;
+    //String name;
 
-    @SerializedName("_id")
-    private String id;
-    private String name;
+    @Override
+    public String toString() {
+        return "Members{" +
+                "id='" + _id + '\'' +
+                '}';
+    }
+
+    public Members() {
+    }
+
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
 }
+
